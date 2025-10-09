@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ product.name }}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
+    <div class="max-w-xl mx-auto bg-white p-8 rounded-lg shadow-xl w-full">
+        <h1 class="text-3xl font-bold text-indigo-700 mb-4 text-center">{{ product.name }}</h1>
+        
+        <div class="mb-4">
+            <p class="text-gray-700 text-lg mb-2"><strong class="font-semibold">Descripción:</strong> {{ product.description|default:"No hay descripción disponible." }}</p>
+            <p class="text-gray-700 text-lg mb-2"><strong class="font-semibold">Precio:</strong> <span class="text-green-600 font-bold text-xl">S/ {{ product.price|floatformat:2 }}</span></p>
+            <p class="text-gray-700 text-lg mb-2"><strong class="font-semibold">Stock:</strong> {{ product.stock }} unidades</p>
+            {% if product.barcode %}
+                <p class="text-gray-700 text-lg mb-2"><strong class="font-semibold">Código de Barras:</strong> <span class="font-mono bg-gray-200 px-2 py-1 rounded-md">{{ product.barcode }}</span>
+                <svg id="barcode"></svg>
+                </p>
+            {% endif %}
+            <p class="text-gray-500 text-sm mt-4">Creado el: {{ product.created_at|date:"d M Y H:i" }}</p>
+            <p class="text-gray-500 text-sm">Última actualización: {{ product.updated_at|date:"d M Y H:i" }}</p>
+        </div>
+
+        <div class="mt-8 text-center">
+            <a href="{% url 'product_list' %}" class="inline-block bg-indigo-500 hover:bg-indigo-600 text-white font-semibold py-2 px-5 rounded-md transition duration-300 ease-in-out mr-4">
+                Volver a la Lista
+            </a>
+            <a href="{% url 'home' %}" class="inline-block bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-5 rounded-md transition duration-300 ease-in-out">
+                Volver al Inicio
+            </a>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const code = "{{ product.barcode }}"; // Django renderiza este valor
+            if (code) {
+                JsBarcode("#barcode", code, {
+                    format: "CODE128", // Puedes usar EAN13 si es válido
+                    lineColor: "#000",
+                    width: 1, // Ancho de las barras
+                    height: 30,
+                    displayValue: true
+                });
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,39 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Tienda</title>
+    <link rel="stylesheet" href="{% static 'home/home.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="login-container">
+        <h1>Bienvenido a Mi Tienda</h1> 
+        <p>Sistema de gestión de ventas y productos.</p>
+        
+    {% if user.is_authenticated %}
+        <p>Hola, {{ user.username }}!</p>
+        <div class="links-container">
+            <a class="product-list" href="{% url 'product_list' %}">Ver Productos</a>
+            <a class="create-sale" href="{% url 'create_sale' %}">Realizar Venta</a>
+        
+        {% if user.is_superuser %}
+            <a class="admin" href="/admin/">Panel de Administración</a>
+        {% endif %}
+
+            <form method="post" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button class="logout" type="submit">Cerrar Sesión</button>
+            </form>
+        </div>
+
+    {% else %}
+        <p>Por favor, <a href="{% url 'login' %}">inicia sesión</a> para continuar.</p>
+    {% endif %}
+
+    </div>
+</body>
+</html>

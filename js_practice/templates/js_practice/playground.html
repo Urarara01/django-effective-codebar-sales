@@ -1,0 +1,39 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Playground JS + Django</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap">
+    <style>
+        body { font-family: 'Inter', sans-serif; background: #f3f4f6; margin: 0; padding: 0; }
+        .container { max-width: 600px; margin: 40px auto; background: #fff; padding: 32px; border-radius: 12px; box-shadow: 0 2px 16px rgba(0,0,0,0.08); }
+        h1 { text-align: center; color: #4338ca; }
+        textarea { width: 100%; min-height: 60px; margin-bottom: 10px; }
+        button { padding: 8px 18px; border-radius: 6px; font-weight: 600; background: #6366f1; color: #fff; border: none; cursor: pointer; }
+        button:hover { background: #4338ca; }
+        .result { background: #f1f5f9; padding: 10px; border-radius: 6px; margin-top: 10px; }
+        .js-area { margin-top: 30px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Playground JS + Django</h1>
+        <form id="apiForm">
+            <label>Nombre: <input type="text" name="nombre" id="nombre"></label><br><br>
+            <label>Edad: <input type="number" name="edad" id="edad"></label><br><br>
+            <button type="submit">Enviar a Django (POST)</button>
+        </form>
+        <div id="apiResult" class="result"></div>
+        <div class="js-area">
+            <h2>Zona de Pruebas JS</h2>
+            <textarea id="jsInput" placeholder="Escribe código JS aquí y ejecútalo..."></textarea>
+            <button id="runJs">Ejecutar JS</button>
+            <div id="jsOutput" class="result"></div>
+        </div>
+    </div>
+    <script src="{% static 'js_practice/playground.js' %}"></script>
+</body>
+</html>
