@@ -27,6 +27,13 @@
         <div class="productos-lista">
             {% for product in products %}
             <div class="producto">
+                {% if user.is_superuser %}
+                    <a href="{% url 'product_delete' product.pk %}" class="btn-eliminar" 
+                       onclick="return confirm('¿Estás seguro de que quieres eliminar {{ product.name }}?')"
+                       title="Eliminar producto">
+                        x
+                    </a>
+                {% endif %}
                 <div>
                     <h2 class="producto-nombre">{{ product.name }}</h2>
                     <p class="producto-desc">{{ product.description|default:"Sin descripción" }}</p>

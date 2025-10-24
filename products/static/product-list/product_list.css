@@ -39,6 +39,7 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    position: relative;
 }
 .producto-nombre {
     font-size: 1.2rem;
@@ -81,6 +82,37 @@ body {
 .btn-azul:hover { background: #4338ca; }
 .btn-gris { background: #6b7280; }
 .btn-gris:hover { background: #374151; }
+.btn-rojo { background: #dc2626; }
+.btn-rojo:hover { background: #b91c1c; }
+.btn-eliminar {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: #dc2626;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+.btn-eliminar:hover {
+    background: #b91c1c;
+    transform: scale(1.1);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+.acciones-producto {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+}
 .no-productos {
     width: 100%;
     text-align: center;

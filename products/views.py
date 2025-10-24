@@ -52,3 +52,12 @@ def check_product_name_unique(request):
             is_unique = not Product.objects.filter(name__iexact=name).exists()
             return JsonResponse({'is_unique': is_unique})
     return JsonResponse({'is_unique': False}, status=400) # Bad request if no name provided or not GET
+
+@login_required
+@user_passes_test(is_owner) # Solo el dueño puede acceder a esta vista
+def product_delete(request, pk):
+    product = get_object_or_404(Product, pk=pk)
+    if request.method == 'POST':
+        product.delete()
+        return redirect('product_list')
+    return render(request, 'products/product_confirm_delete.html', {'product': product})
