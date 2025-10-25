@@ -102,11 +102,15 @@ body {
     font-weight: bold;
     transition: all 0.2s ease;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    text-decoration: none;
 }
 .btn-eliminar:hover {
     background: #b91c1c;
     transform: scale(1.1);
     box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+.btn-eliminar svg {
+    pointer-events: none;
 }
 .acciones-producto {
     display: flex;

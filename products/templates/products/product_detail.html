@@ -22,40 +22,96 @@
             <p class="text-gray-700 text-lg mb-2"><strong class="font-semibold">Precio:</strong> <span class="text-green-600 font-bold text-xl">S/ {{ product.price|floatformat:2 }}</span></p>
             <p class="text-gray-700 text-lg mb-2"><strong class="font-semibold">Stock:</strong> {{ product.stock }} unidades</p>
             {% if product.barcode %}
-                <p class="text-gray-700 text-lg mb-2"><strong class="font-semibold">Código de Barras:</strong> <span class="font-mono bg-gray-200 px-2 py-1 rounded-md">{{ product.barcode }}</span>
-                <svg id="barcode"></svg>
+                <p class="text-gray-700 text-lg mb-2">
+                    <strong class="font-semibold">Código de Barras:</strong> 
+                    <span id="barcode-text" 
+                          class="font-semibold font-mono bg-gray-200 px-2 py-1 rounded-md cursor-pointer hover:bg-gray-300 transition-colors duration-200 select-all inline-flex items-center" 
+                          onclick="copyBarcode()" 
+                          title="Click para copiar al portapapeles">
+                        {{ product.barcode }}
+                        <svg class="ml-2 w-4 h-4 text-gray-600" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/>
+                            <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z"/>
+                        </svg>
+                    </span>
                 </p>
+                <div id="copy-notification" class="hidden text-green-600 text-sm mb-2">
+                    ✅ Código copiado al portapapeles
+                </div>
             {% endif %}
             <p class="text-gray-500 text-sm mt-4">Creado el: {{ product.created_at|date:"d M Y H:i" }}</p>
             <p class="text-gray-500 text-sm">Última actualización: {{ product.updated_at|date:"d M Y H:i" }}</p>
         </div>
 
-        <div class="mt-8 text-center">
-            <a href="{% url 'product_list' %}" class="inline-block bg-indigo-500 hover:bg-indigo-600 text-white font-semibold py-2 px-5 rounded-md transition duration-300 ease-in-out mr-4">
-                Volver a la Lista
+        <div class="mt-8 flex flex-wrap justify-center gap-4">
+            <a href="{% url 'product_list' %}" class="inline-block bg-indigo-500 hover:bg-indigo-600 text-white font-semibold py-2 px-5 rounded-md transition duration-300 ease-in-out">
+                📦 Volver a la Lista
             </a>
             {% if user.is_superuser %}
-                <a href="{% url 'product_update' product.pk %}" class="inline-block bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-5 rounded-md transition duration-300 ease-in-out mr-4">
+                <a href="{% url 'product_update' product.pk %}" class="inline-block bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-5 rounded-md transition duration-300 ease-in-out">
                     ✏️ Editar Producto
                 </a>
             {% endif %}
             <a href="{% url 'home' %}" class="inline-block bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-5 rounded-md transition duration-300 ease-in-out">
-                Volver al Inicio
+                🏠 Volver al Inicio
             </a>
         </div>
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const code = "{{ product.barcode }}"; // Django renderiza este valor
-            if (code) {
-                JsBarcode("#barcode", code, {
-                    format: "CODE128", // Puedes usar EAN13 si es válido
-                    lineColor: "#000",
-                    width: 1, // Ancho de las barras
-                    height: 30,
-                    displayValue: true
+        function copyBarcode() {
+            const barcodeText = document.getElementById('barcode-text').textContent.trim();
+            const notification = document.getElementById('copy-notification');
+            
+            // Usar la API moderna de clipboard si está disponible
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(barcodeText).then(() => {
+                    showCopyNotification(notification);
+                }).catch(err => {
+                    console.error('Error al copiar: ', err);
+                    fallbackCopyTextToClipboard(barcodeText, notification);
                 });
+            } else {
+                // Fallback para navegadores más antiguos
+                fallbackCopyTextToClipboard(barcodeText, notification);
+            }
+        }
+        
+        function fallbackCopyTextToClipboard(text, notification) {
+            const textArea = document.createElement("textarea");
+            textArea.value = text;
+            textArea.style.top = "0";
+            textArea.style.left = "0";
+            textArea.style.position = "fixed";
+            
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            
+            try {
+                const successful = document.execCommand('copy');
+                if (successful) {
+                    showCopyNotification(notification);
+                }
+            } catch (err) {
+                console.error('Error al copiar: ', err);
+            }
+            
+            document.body.removeChild(textArea);
+        }
+        
+        function showCopyNotification(notification) {
+            notification.classList.remove('hidden');
+            setTimeout(() => {
+                notification.classList.add('hidden');
+            }, 2000);
+        }
+        
+        // Hacer que el texto también sea clickeable para copiar
+        document.addEventListener('DOMContentLoaded', function () {
+            const barcodeText = document.getElementById('barcode-text');
+            if (barcodeText) {
+                barcodeText.addEventListener('click', copyBarcode);
             }
         });
     </script>
