@@ -21,6 +21,7 @@
             <a class="create-sale" href="{% url 'create_sale' %}">Realizar Venta</a>
         
         {% if user.is_superuser %}
+            <a class="report" href="{% url 'report_of_the_day' %}">📊 Reporte del Día</a>
             <a class="admin" href="/admin/">Panel de Administración</a>
         {% endif %}
 

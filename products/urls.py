@@ -10,6 +10,7 @@ urlpatterns = [
     path('<int:pk>/', views.product_detail, name='product_detail'),
     path('<int:pk>/delete/', views.product_delete, name='product_delete'), # Nueva URL para eliminar producto
     path('<int:pk>/update/', views.product_update, name='product_update'), # Nueva URL para actualizar producto
+    path('report/', views.report_of_the_day, name='report_of_the_day'), # Nueva URL para reporte del día
 ]
 # Este archivo define las URLs específicas de la aplicación de productos.
 # - La URL raíz ('') muestra la lista de productos.

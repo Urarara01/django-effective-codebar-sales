@@ -65,6 +65,12 @@ body {
                 background-color: #6a2bbf;
             }}
 
+        &>.report {
+            background-color: #2563eb;
+            &:hover {
+                background-color: #1d4ed8;
+            }}
+
         &>.admin {
             background-color: #e97b32;
             &:hover {
