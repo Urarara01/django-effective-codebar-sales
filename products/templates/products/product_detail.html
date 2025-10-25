@@ -34,6 +34,11 @@
             <a href="{% url 'product_list' %}" class="inline-block bg-indigo-500 hover:bg-indigo-600 text-white font-semibold py-2 px-5 rounded-md transition duration-300 ease-in-out mr-4">
                 Volver a la Lista
             </a>
+            {% if user.is_superuser %}
+                <a href="{% url 'product_update' product.pk %}" class="inline-block bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-5 rounded-md transition duration-300 ease-in-out mr-4">
+                    ✏️ Editar Producto
+                </a>
+            {% endif %}
             <a href="{% url 'home' %}" class="inline-block bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-5 rounded-md transition duration-300 ease-in-out">
                 Volver al Inicio
             </a>

@@ -48,8 +48,13 @@ def product_create(request):
 def check_product_name_unique(request):
     if request.method == 'GET':
         name = request.GET.get('name', '').strip()
+        exclude_id = request.GET.get('exclude_id', None)  # ID del producto a excluir (para edición)
+        
         if name:
-            is_unique = not Product.objects.filter(name__iexact=name).exists()
+            queryset = Product.objects.filter(name__iexact=name)
+            if exclude_id:
+                queryset = queryset.exclude(pk=exclude_id)
+            is_unique = not queryset.exists()
             return JsonResponse({'is_unique': is_unique})
     return JsonResponse({'is_unique': False}, status=400) # Bad request if no name provided or not GET
 
@@ -61,3 +66,17 @@ def product_delete(request, pk):
         product.delete()
         return redirect('product_list')
     return render(request, 'products/product_confirm_delete.html', {'product': product})
+
+@login_required
+@user_passes_test(is_owner) # Solo el dueño puede acceder a esta vista
+def product_update(request, pk):
+    product = get_object_or_404(Product, pk=pk)
+    if request.method == 'POST':
+        form = ProductForm(request.POST, instance=product)
+        if form.is_valid():
+            form.save()
+            return redirect('product_list')
+    else:
+        form = ProductForm(instance=product)
+    return render(request, 'products/product_update.html', {'form': form, 'product': product})
+
