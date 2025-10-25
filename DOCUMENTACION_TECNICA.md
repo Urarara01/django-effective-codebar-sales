@@ -415,17 +415,22 @@ with transaction.atomic():
 
 ## Guía de Instalación
 
-### Prerrequisitos
+### ⚠️ IMPORTANTE
+**Para una guía de instalación completa y detallada, consultar el archivo [GUIA_INSTALACION.md](./GUIA_INSTALACION.md)**
+
+### Instalación Rápida (Resumen)
+
+#### Prerrequisitos
 - Python 3.10+
 - pip (gestor de paquetes)
-- Git
+- Git (opcional)
 
-### Pasos de Instalación
+#### Pasos Básicos
 
 1. **Clonar repositorio**:
 ```bash
-git clone <repository-url>
-cd shop-automatization-with-barcode
+git clone https://github.com/Urarara01/django-effective-codebar-sales.git
+cd django-effective-codebar-sales
 ```
 
 2. **Crear entorno virtual**:
@@ -439,7 +444,7 @@ source tienda_barcode/bin/activate
 
 3. **Instalar dependencias**:
 ```bash
-pip install django
+pip install -r requirements.txt
 ```
 
 4. **Configurar base de datos**:
@@ -458,17 +463,19 @@ python manage.py createsuperuser
 python manage.py runserver
 ```
 
-### Datos de Prueba
-Para testing, crear productos con códigos de barras generados automáticamente:
-1. Acceder a `/products/create/`
-2. Crear productos de prueba
-3. Usar `/sales/new/` para probar ventas
-
 ### URLs Principales
 - **Home**: `http://127.0.0.1:8000/`
 - **Productos**: `http://127.0.0.1:8000/products/`
 - **Ventas**: `http://127.0.0.1:8000/sales/new/`
+- **Reportes**: `http://127.0.0.1:8000/products/report-of-the-day/`
 - **Admin**: `http://127.0.0.1:8000/admin/`
+
+### Datos de Prueba
+Para testing, crear productos usando la interfaz web:
+1. Acceder a `/products/create/` (requiere login como superusuario)
+2. Crear productos de prueba con nombres descriptivos
+3. Los códigos de barras se generan automáticamente
+4. Usar `/sales/new/` para probar el sistema de ventas
 
 ## Mejoras Futuras Sugeridas
 
