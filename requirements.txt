@@ -1,2 +1,6 @@
 Django==5.2.7
 python-slugify==8.0.4
+
+# Dependencias opcionales para Termux
+# wheel>=0.37.0  # Para instalación más rápida
+# setuptools>=60.0.0  # Compatibilidad mejorada

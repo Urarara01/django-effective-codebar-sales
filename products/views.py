@@ -88,6 +88,10 @@ def report_of_the_day(request):
     from sales.models import Sale, SaleItem
     from datetime import datetime, time
     import json
+    import os
+    
+    # Detectar si estamos en Termux
+    is_termux = 'TERMUX_VERSION' in os.environ or 'PREFIX' in os.environ
     
     # Obtener la fecha y hora actual en la zona horaria configurada
     now = timezone.now()
@@ -145,6 +149,10 @@ def report_of_the_day(request):
         'products_out_of_stock': products_out_of_stock,
         'hourly_sales': json.dumps(hourly_sales),  # Convertir a JSON para JavaScript
         'recent_sales': sales_today.order_by('-sale_date')[:10],  # Últimas 10 ventas
+        'is_termux': is_termux,  # Pasar información de Termux al template
     }
     
-    return render(request, 'products/report_of_the_day.html', context)
+    # Usar template específico para Termux si está disponible
+    template_name = 'products/report_of_the_day_termux.html' if is_termux else 'products/report_of_the_day.html'
+    
+    return render(request, template_name, context)

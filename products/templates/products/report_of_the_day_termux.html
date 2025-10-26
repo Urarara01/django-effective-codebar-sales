@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reporte del Día - {{ today|date:"d/m/Y" }} (Termux)</title>
+    
+    <!-- CSS básico sin CDN para funcionamiento offline -->
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f3f4f6;
+            min-height: 100vh;
+            padding: 1rem;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .header h1 {
+            color: #4338ca;
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border-left: 4px solid #4338ca;
+        }
+        
+        .stat-card.sales { border-left-color: #f59e0b; }
+        .stat-card.revenue { border-left-color: #10b981; }
+        .stat-card.products { border-left-color: #3b82f6; }
+        .stat-card.stock { border-left-color: #ef4444; }
+        
+        .stat-label {
+            color: #6b7280;
+            font-size: 0.875rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #1f2937;
+        }
+        
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .card h3 {
+            color: #1f2937;
+            margin-bottom: 1rem;
+            font-size: 1.25rem;
+        }
+        
+        .product-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem;
+            background: #f9fafb;
+            border-radius: 6px;
+            margin-bottom: 0.5rem;
+        }
+        
+        .product-name {
+            font-weight: 600;
+            color: #1f2937;
+        }
+        
+        .product-info {
+            color: #6b7280;
+            font-size: 0.875rem;
+        }
+        
+        .product-revenue {
+            font-weight: bold;
+            color: #10b981;
+        }
+        
+        .low-stock {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+        }
+        
+        .low-stock .product-name {
+            color: #dc2626;
+        }
+        
+        .no-data {
+            text-align: center;
+            color: #6b7280;
+            padding: 2rem;
+            font-style: italic;
+        }
+        
+        .actions {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            margin: 0.25rem;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        
+        .btn-primary { background: #4338ca; color: white; }
+        .btn-success { background: #10b981; color: white; }
+        .btn-secondary { background: #6b7280; color: white; }
+        .btn-purple { background: #7c3aed; color: white; }
+        
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 1.875rem;
+            }
+        }
+        
+        /* Modo oscuro para dispositivos móviles */
+        @media (prefers-color-scheme: dark) {
+            body { background-color: #1f2937; }
+            .header, .card, .stat-card, .actions {
+                background: #374151;
+                color: #f9fafb;
+            }
+            .product-item { background: #4b5563; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>📊 Reporte del Día</h1>
+            <p style="color: #6b7280; font-size: 1.125rem;">{{ today|date:"l, d \d\e F \d\e Y" }}</p>
+            <small style="color: #9ca3af;">Modo Termux - Sin conexión requerida</small>
+        </div>
+
+        <!-- Estadísticas principales -->
+        <div class="stats-grid">
+            <div class="stat-card sales">
+                <div class="stat-label">Ventas Hoy</div>
+                <div class="stat-value">{{ total_sales_count }}</div>
+            </div>
+            
+            <div class="stat-card revenue">
+                <div class="stat-label">Ingresos</div>
+                <div class="stat-value">S/ {{ total_revenue|floatformat:2 }}</div>
+            </div>
+            
+            <div class="stat-card products">
+                <div class="stat-label">Total Productos</div>
+                <div class="stat-value">{{ total_products }}</div>
+            </div>
+            
+            <div class="stat-card stock">
+                <div class="stat-label">Sin Stock</div>
+                <div class="stat-value">{{ products_out_of_stock }}</div>
+            </div>
+        </div>
+
+        <div class="content-grid">
+            <!-- Productos Más Vendidos -->
+            <div class="card">
+                <h3>🏆 Top 5 Productos del Día</h3>
+                {% if top_products %}
+                    {% for product in top_products %}
+                    <div class="product-item">
+                        <div>
+                            <div class="product-name">{{ product.product__name }}</div>
+                            <div class="product-info">{{ product.total_quantity }} unidades vendidas</div>
+                        </div>
+                        <div class="product-revenue">S/ {{ product.total_revenue|floatformat:2 }}</div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="no-data">No hay ventas registradas hoy</div>
+                {% endif %}
+            </div>
+
+            <!-- Productos con Bajo Stock -->
+            <div class="card">
+                <h3>⚠️ Productos con Bajo Stock</h3>
+                {% if low_stock_products %}
+                    {% for product in low_stock_products %}
+                    <div class="product-item low-stock">
+                        <div>
+                            <div class="product-name">{{ product.name }}</div>
+                            <div class="product-info">S/ {{ product.price|floatformat:2 }}</div>
+                        </div>
+                        <div style="font-weight: bold; color: #dc2626;">{{ product.stock }} unidades</div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="no-data" style="color: #10b981;">✅ Todos los productos tienen stock suficiente</div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Últimas Ventas -->
+        <div class="card" style="margin-bottom: 2rem;">
+            <h3>🕐 Últimas Ventas del Día</h3>
+            {% if recent_sales %}
+                {% for sale in recent_sales %}
+                <div class="product-item">
+                    <div>
+                        <div class="product-name">Venta #{{ sale.id }}</div>
+                        <div class="product-info">{{ sale.sale_date|date:"H:i" }} - {{ sale.user.username|default:"Sin usuario" }}</div>
+                    </div>
+                    <div class="product-revenue">S/ {{ sale.total_amount|floatformat:2 }}</div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="no-data">No hay ventas registradas hoy</div>
+            {% endif %}
+        </div>
+
+        <!-- Acciones -->
+        <div class="actions">
+            <a href="{% url 'product_list' %}" class="btn btn-primary">📦 Ver Productos</a>
+            <a href="{% url 'create_sale' %}" class="btn btn-success">🛒 Nueva Venta</a>
+            <a href="/admin/" class="btn btn-purple">⚙️ Administración</a>
+            <a href="{% url 'home' %}" class="btn btn-secondary">🏠 Volver al Inicio</a>
+        </div>
+    </div>
+</body>
+</html>
